@@ -27,7 +27,7 @@ async function createRepo(repo) {
   }
 }
 
-async function getRepo(req, res, next) {
+async function getRepos(req, res, next) {
   try {
     const repositories = await Repo.find().sort({ stargazers_count: -1 });
     res.json(repositories);
@@ -46,8 +46,7 @@ async function getAddedRepo(req, res, next) {
       res.json(repository);
     }
   } catch(err) {
-		res.status(500);
-		res.json({ message: 'Error: ' + err.message });
+		res.status(500).json({ message: 'Error: ' + err.message });
   } 
 }
 
@@ -83,8 +82,7 @@ async function startTimer(req, res) {
     }
   } catch (error) {
     console.log('Error: ' + error.message);
-    res.status(500);
-    res.end();
+    res.status(500).json({ message: 'Error: ' + err.message });
   }
 }
 
@@ -103,13 +101,12 @@ async function stopTimer(req, res) {
     }
   } catch (error) {
     console.log('Error: ' + error.message);
-    res.status(500);
-    res.end();
+    res.status(500).json({ message: 'Error: ' + err.message });
   }
 }
 
 module.exports = {
-  getRepo,
+  getRepos,
   getAddedRepo,
   startTimer,
   stopTimer,

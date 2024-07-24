@@ -1,17 +1,17 @@
 const router = require('express').Router()
 const {
-  getRepo,
+  getRepos,
   getAddedRepo,
   startTimer,
   stopTimer,
 } = require('../controllers/repoControllers')
 
-router.get('/repositories', getRepo);
+router.get('/repositories', getRepos);
 
 router.get('/repositories/:nameOrId', getAddedRepo);
 
-router.get('/sync/start', startTimer);
+router.post('/sync/start', startTimer);
 
-router.get('/sync/force', stopTimer);
+router.post('/sync/force', stopTimer);
 
 module.exports = router;
