@@ -1,10 +1,6 @@
 const { program } = require('commander');
 const axios = require('axios');
 
-const {
-  getAddedRepo
-} = require('./controllers/repoControllers')
-
 const APIURL = process.env.APIURL || 'http://localhost:3000';
 
 program

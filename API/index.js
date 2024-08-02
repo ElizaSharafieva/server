@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors');
 const path = require('path');
+const { scheduleMoscowReset } = require('./utils/regionalResets');
 require('dotenv').config();
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const MONGODB_URL = process.env.MONGODB_URL;
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 	res.end();
 });
 
+scheduleMoscowReset();
 // app.use((err, req, res, next) => {
 
 //   console.log(res.status)

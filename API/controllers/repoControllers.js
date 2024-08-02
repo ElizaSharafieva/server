@@ -1,11 +1,12 @@
 const axios = require('axios');
 const Repo = require('../model/repoSchema')
+const { getNextResetTime } = require('../utils/regionalResets');
 
 const ConflictRequestError = require('../errors/ConflictRequestError');
 
 let autoSyncTimer = null;
 let nextSyncTime = null;
-const minutes = 720;
+const minutes = 60;
 
 async function createRepo(repo) {
   try {
@@ -29,8 +30,9 @@ async function createRepo(repo) {
 
 async function getRepos(req, res, next) {
   try {
-    const repositories = await Repo.find().sort({ stargazers_count: -1 });
-    res.json(repositories);
+    const repositories = await Repo.find().sort({ daily_stars: -1 })
+    const nextResetTime = getNextResetTime();
+    res.json({ repositories, nextResetTime });
   } catch (error) {
     res.status(500).json({ error: 'Error fetching repositories' });
   }
@@ -45,8 +47,8 @@ async function getAddedRepo(req, res, next) {
     } else {
       res.json(repository);
     }
-  } catch(err) {
-		res.status(500).json({ message: 'Error: ' + err.message });
+  } catch(error) {
+		res.status(500).json({ message: 'Error: ' + error.message });
   } 
 }
 
@@ -57,15 +59,20 @@ async function startSync(req, res, next) {
     for (const repo of repositories) {
       const addedRepo = await Repo.findOne({ id: repo.id })
       if (addedRepo) {
+        const starsToday = repo.stargazers_count - addedRepo.stargazers_count
+        if (starsToday > 0) {
+          addedRepo.daily_stars += starsToday
+        }
         addedRepo.stargazers_count = repo.stargazers_count;
         addedRepo.last_synced = Date.now();
+        // console.log(addedRepo.last_synced)
         await addedRepo.save();
       } else createRepo(repo)
     }
     nextSyncTime = Date.now() + minutes * 60 * 1000;
     console.log(`Auto sync started. Next sync scheduled for: ${new Date(nextSyncTime)}`);
-  } catch(err) {
-    console.log(err)
+  } catch(error) {
+    console.log(error)
   }
 }
 
@@ -82,7 +89,7 @@ async function startTimer(req, res) {
     }
   } catch (error) {
     console.log('Error: ' + error.message);
-    res.status(500).json({ message: 'Error: ' + err.message });
+    res.status(500).json({ message: 'Error: ' + error.message });
   }
 }
 
@@ -101,7 +108,7 @@ async function stopTimer(req, res) {
     }
   } catch (error) {
     console.log('Error: ' + error.message);
-    res.status(500).json({ message: 'Error: ' + err.message });
+    res.status(500).json({ message: 'Error: ' + error.message });
   }
 }
 

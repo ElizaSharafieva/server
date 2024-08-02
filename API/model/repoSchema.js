@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const validator = require('validator');
+const validator = require('validator')
 
 const repoSchema = new mongoose.Schema({
   id: {
@@ -19,7 +19,7 @@ const repoSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: (v) => {
-        validator.isURL(v);
+        validator.isURL(v)
       },
       message: 'Неверный формат ссылки',
     },
@@ -29,7 +29,7 @@ const repoSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (v) => {
-        validator.isURL(v);
+        validator.isURL(v)
       },
       message: 'Неверный формат ссылки',
     },
@@ -39,7 +39,7 @@ const repoSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (v) => {
-        validator.isURL(v);
+        validator.isURL(v)
       },
       message: 'Неверный формат ссылки',
     },
@@ -51,10 +51,14 @@ const repoSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  daily_stars: { 
+    type: Number, 
+    default: 0 
+  },
   last_synced : {
     type: Date,
     default: Date.now
   }
 })
 
-module.exports = mongoose.model('repository', repoSchema);
+module.exports = mongoose.model('repository', repoSchema)
